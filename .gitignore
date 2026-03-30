@@ -43,3 +43,5 @@ next-env.d.ts
 # documentation - exclude all .md files except README.md
 *.md
 !README.md
+AGENTS.md
+CLAUDE.md
