@@ -10,16 +10,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-blue-500/50 dark:from-blue-500 dark:to-blue-600 dark:hover:from-blue-600 dark:hover:to-blue-700",
+        default: "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold shadow-lg hover:shadow-blue-500/50 dark:from-blue-500 dark:to-blue-600 dark:hover:from-blue-600 dark:hover:to-blue-700",
         outline:
-          "border-2 border-blue-500/30 bg-background hover:bg-blue-50 hover:text-foreground aria-expanded:bg-blue-50 aria-expanded:text-foreground dark:border-blue-400/40 dark:bg-input/30 dark:hover:bg-input/60 dark:hover:border-blue-400/60 text-blue-600 dark:text-blue-300",
+          "border-2 border-blue-600 bg-white hover:bg-blue-50 text-blue-700 hover:text-blue-800 font-semibold aria-expanded:bg-blue-50 aria-expanded:text-blue-800 dark:border-blue-400 dark:bg-slate-900 dark:hover:bg-blue-950 dark:hover:border-blue-300 dark:text-blue-300 dark:hover:text-blue-200",
         secondary:
-          "bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-lg hover:shadow-purple-500/50 dark:from-purple-600 dark:to-purple-700 dark:hover:from-purple-700 dark:hover:to-purple-800",
+          "bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold shadow-lg hover:shadow-purple-500/50 dark:from-purple-500 dark:to-purple-600 dark:hover:from-purple-600 dark:hover:to-purple-700",
         ghost:
-          "hover:bg-blue-100 hover:text-blue-700 text-gray-700 aria-expanded:bg-blue-100 aria-expanded:text-blue-700 dark:hover:bg-blue-950 dark:hover:text-blue-300 dark:text-gray-300 dark:aria-expanded:bg-blue-950 dark:aria-expanded:text-blue-300",
+          "bg-transparent hover:bg-blue-100 text-blue-700 hover:text-blue-800 font-semibold aria-expanded:bg-blue-100 aria-expanded:text-blue-800 dark:hover:bg-blue-900/40 dark:hover:text-blue-200 dark:text-blue-300 dark:aria-expanded:bg-blue-900/40 dark:aria-expanded:text-blue-200",
         destructive:
-          "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg hover:shadow-red-500/50 dark:from-red-600 dark:to-red-700 dark:hover:from-red-700 dark:hover:to-red-800",
-        link: "text-blue-600 dark:text-blue-400 underline-offset-4 hover:underline font-semibold",
+          "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold shadow-lg hover:shadow-red-500/50 dark:from-red-500 dark:to-red-600 dark:hover:from-red-600 dark:hover:to-red-700",
+        link: "text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline-offset-4 hover:underline font-bold hover:font-bold",
       },
       size: {
         default:
