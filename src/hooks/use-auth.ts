@@ -68,8 +68,21 @@ export const useAuth = () => {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const { data: session } = await authClient.getSession();
-        setAuthState(session, !!session);
+        const sessionToken = typeof window !== "undefined" 
+          ? localStorage.getItem("session_token")
+          : null;
+
+        if (sessionToken) {
+          const response = await http.get("/auth/get-session", {
+            headers: { Authorization: `Bearer ${sessionToken}` },
+          });
+          
+          if (response.data?.user) {
+            setAuthState(response.data);
+          }
+        } else {
+          setState((prev) => ({ ...prev, loading: false }));
+        }
       } catch (error) {
         console.error("Failed to initialize auth:", error);
         setState((prev) => ({ ...prev, loading: false }));
@@ -85,20 +98,22 @@ export const useAuth = () => {
       setState((prev) => ({ ...prev, loading: true, error: null }));
 
       try {
-        const response = await authClient.signUp.email({
+        const response = await http.post("/auth/sign-up/email", {
           email,
           password,
           name,
         });
 
-        if (response.error) {
-          throw new Error(response.error.message || "Sign up failed");
+        if (response.data?.data?.user && response.data?.data?.session) {
+          const userData = response.data.data;
+          if (typeof window !== "undefined") {
+            localStorage.setItem("session_token", userData.session.id);
+          }
+          setAuthState(userData);
+          return userData;
         }
 
-        const { data: session } = await authClient.getSession();
-        setAuthState(session);
-
-        return response.data;
+        throw new Error("Sign up failed");
       } catch (error) {
         const message = ApiErrorHandler.getErrorMessage(error);
         setAuthError(message);
@@ -151,19 +166,21 @@ export const useAuth = () => {
       setState((prev) => ({ ...prev, loading: true, error: null }));
 
       try {
-        const response = await authClient.signIn.email({
+        const response = await http.post("/auth/sign-in/email", {
           email,
           password,
         });
 
-        if (response.error) {
-          throw new Error(response.error.message || "Login failed");
+        if (response.data?.data?.user && response.data?.data?.session) {
+          const userData = response.data.data;
+          if (typeof window !== "undefined") {
+            localStorage.setItem("session_token", userData.session.id);
+          }
+          setAuthState(userData);
+          return userData;
         }
 
-        const { data: session } = await authClient.getSession();
-        setAuthState(session);
-
-        return response.data;
+        throw new Error("Login failed");
       } catch (error) {
         const message = ApiErrorHandler.getErrorMessage(error);
         setAuthError(message);
@@ -178,7 +195,6 @@ export const useAuth = () => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
-      await authClient.signOut();
       localStorage.removeItem("session_token");
 
       setState({
