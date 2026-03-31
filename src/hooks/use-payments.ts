@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { http } from "@/lib/http";
 import { ApiErrorHandler } from "@/lib/errors";
+import { extractResponseData } from "@/lib/api-utils";
 
 export interface StripeSession {
   sessionId: string;
@@ -27,7 +28,7 @@ export const useStripeCheckout = () => {
     mutationFn: async (planId: "monthly" | "yearly") => {
       const response = await http.post<StripeSession>(
         "/payments/stripe/create-checkout-session",
-        { planId }
+        { plan: planId }
       );
       return response.data;
     },
@@ -53,8 +54,8 @@ export const useSubscriptionStatus = () => {
   return useQuery({
     queryKey: ["subscription"],
     queryFn: async () => {
-      const response = await http.get<Subscription>("/payments/subscription-status");
-      return response.data;
+      const response = await http.get<Subscription>("/payments/stripe/subscription-status");
+      return extractResponseData(response.data);
     },
   });
 };
@@ -66,8 +67,11 @@ export const useCancelSubscription = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
-      await http.post("/payments/cancel-subscription");
+    mutationFn: async (cancelAtPeriodEnd = true) => {
+      const response = await http.post("/payments/stripe/cancel-subscription", {
+        cancelAtPeriodEnd,
+      });
+      return extractResponseData(response.data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
@@ -81,8 +85,14 @@ export const useCancelSubscription = () => {
 export const useSSLCommerceCheckout = () => {
   return useMutation({
     mutationFn: async (planId: "monthly" | "yearly") => {
-      const response = await http.post("/payments/sslcommerz/init", { planId });
-      return response.data;
+      // Amount in cents: monthly=$9.99, yearly=$99.99
+      const amounts = { monthly: 999, yearly: 9999 };
+      const response = await http.post("/payments/sslcommerz/init", {
+        amount: amounts[planId],
+        currency: "BDT",
+        plan: planId,
+      });
+      return extractResponseData(response.data);
     },
     onSuccess: (data) => {
       // SSL Commerce should return a redirect URL

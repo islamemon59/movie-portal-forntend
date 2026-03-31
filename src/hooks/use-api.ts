@@ -142,7 +142,11 @@ function createReviewMutation<T>(
  */
 export const useCreateReview = createReviewMutation(
   async (data: { titleId: string; rating: number; comment: string }) => {
-    const response = await http.post("/titles/reviews", data);
+    const { titleId, comment, ...rest } = data;
+    const response = await http.post(
+      `/titles/${titleId}/reviews`,
+      { content: comment, ...rest }
+    );
     return extractResponseData(response.data);
   }
 );
