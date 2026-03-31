@@ -1,21 +1,21 @@
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
+import BetterSqlite3 from "better-sqlite3";
+
+const database = new BetterSqlite3("./auth.db");
 
 export const auth = betterAuth({
-  baseURL: process.env.NEXT_PUBLIC_AUTH_BASE_URL,
+  baseURL: process.env.NEXT_PUBLIC_AUTH_BASE_URL || "http://localhost:3000/api/auth",
   basePath: "/api/auth",
-  secret: process.env.AUTH_SECRET || "your-secret-key-change-in-production",
-  trustedOrigins: [
-    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001",
-  ],
+  secret: process.env.AUTH_SECRET || "dev-secret-key-change-in-production",
+  database,
   emailAndPassword: {
     enabled: true,
   },
-  plugins: [
-    nextCookies(),
-  ],
-  database: {
-    provider: "sqlite",
-    path: "./auth.db",
+  plugins: [nextCookies()],
+  advanced: {
+    crossSubdomainCookies: {
+      enabled: false,
+    },
   },
 });
